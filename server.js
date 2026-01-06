@@ -748,7 +748,7 @@ io.on("connection", (socket) => {
 
 // ─── 8) MONGODB CONNECT & SERVER START ────────────────────────────────────────
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect('mongodb+srv://a:a@bcare.82rnqvu.mongodb.net/?appName=BCare', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -761,3 +761,4 @@ mongoose
     console.error("❌ MongoDB connection error:", err);
     process.exit(1);
   });
+
