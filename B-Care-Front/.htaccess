@@ -1,0 +1,44 @@
+# ─────────────────────────────────────────────────────────────────────────
+#  1) Block all known search engines & bots by User-Agent and referers
+# ─────────────────────────────────────────────────────────────────────────
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1a) Deny requests if they come from a user agent that matches common bots:
+  RewriteCond %{HTTP_USER_AGENT}
+    (?:Googlebot|Bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou) [NC]
+  RewriteRule ^ - [F,L]
+
+  # 1b) Deny obvious scraping tools (curl, wget, HTTrack, etc.)
+  RewriteCond %{HTTP_USER_AGENT} (?:curl|wget|HTTrack|python\-requests) [NC]
+  RewriteRule ^ - [F,L]
+
+  # 1c) Deny if “googlebot” appears anywhere (case-insensitive); you can add more.
+  RewriteCond %{HTTP_USER_AGENT} googlebot [NC]
+  RewriteRule ^ - [F,L]
+
+  # 1d) Deny if “spider” appears anywhere (case-insensitive):
+  RewriteCond %{HTTP_USER_AGENT} spider [NC]
+  RewriteRule ^ - [F,L]
+</IfModule>
+
+# ─────────────────────────────────────────────────────────────────────────
+#  2) (Optional) Prevent indexing via HTTP headers if an attacker ignores robots.txt
+# ─────────────────────────────────────────────────────────────────────────
+
+<IfModule mod_headers.c>
+  # Send an X-Robots-Tag header for all responses
+  Header set X-Robots-Tag "noindex, nofollow, nosnippet, noarchive"
+</IfModule>
+
+# ─────────────────────────────────────────────────────────────────────────
+#  3) (Optional) Protect directories or require basic auth for all visitors
+# ─────────────────────────────────────────────────────────────────────────
+
+#<Directory "/var/www/html">
+#  AuthType Basic
+#  AuthName "Restricted Area"
+#  AuthUserFile /etc/apache2/.htpasswd
+#  Require valid-user
+#</Directory>

