@@ -29,19 +29,29 @@ const app = express();
 const httpServer = http.createServer(app);
 
 // Attach Socket.IO (no auth checks at all)
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: (incoming, callback) => {
+//       if (!incoming || allowedOrigins.includes(incoming)) {
+//         callback(null, true);
+//       } else {
+//         callback("Origin not allowed by CORS", false);
+//       }
+//     },
+//     methods: ["GET", "POST"],
+//     credentials: true,
+//   },
+// });
+
+
 const io = new Server(httpServer, {
   cors: {
-    origin: (incoming, callback) => {
-      if (!incoming || allowedOrigins.includes(incoming)) {
-        callback(null, true);
-      } else {
-        callback("Origin not allowed by CORS", false);
-      }
-    },
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
+
 
 // ─── 4) MIDDLEWARES ───────────────────────────────────────────────────────────
 // 4a) JSON body parsing & logging for /api routes
@@ -54,19 +64,28 @@ app.use("/api", (req, res, next) => {
 });
 
 // 4b) CORS for /api, restricted to our two frontends
+// app.use(
+//   "/api",
+//   cors({
+//     origin: (incoming, callback) => {
+//       if (!incoming || allowedOrigins.includes(incoming)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error(`Origin ${incoming} not allowed`));
+//       }
+//     },
+//     credentials: true,
+//   })
+// );
+
 app.use(
   "/api",
   cors({
-    origin: (incoming, callback) => {
-      if (!incoming || allowedOrigins.includes(incoming)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`Origin ${incoming} not allowed`));
-      }
-    },
+    origin: "*",
     credentials: true,
   })
 );
+
 
 // ─── 5) MONGOOSE MODELS ───────────────────────────────────────────────────────
 // 5a) User model for authentication (no login/register endpoints will exist, but we keep the model in case you want to preserve it)
